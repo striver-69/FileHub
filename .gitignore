@@ -1,0 +1,19 @@
+# Ignore IDE files
+.idea/
+*.iml
+
+# Maven build files for backend
+backend/target/
+
+# Node modules for frontend (if using Node/React/etc.)
+frontend/node_modules/
+
+# Logs
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env
