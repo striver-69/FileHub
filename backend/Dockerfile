@@ -1,29 +1,24 @@
-# Stage 1: Build stage using OpenJDK 17 and Maven wrapper
+# syntax=docker/dockerfile:1.4
 FROM openjdk:17-jdk-slim AS build
 WORKDIR /app
 
-# Copy Maven wrapper files and pom.xml to leverage caching and ensure the correct Maven version is used
+# Copy Maven wrapper and pom.xml first
 COPY pom.xml mvnw ./
 COPY .mvn .mvn
 
-# Resolve dependencies (this layer will be cached unless pom.xml changes)
-RUN ./mvnw dependency:resolve
+# Use BuildKit cache mount for Maven's local repository
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw dependency:go-offline -B
 
-# Copy the source code
+# Copy source code
 COPY src src
 
-# Build the application; you can skip tests if desired
-RUN ./mvnw package -DskipTests
+# Build the application; use the cache mount so that dependencies are reused
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw package -DskipTests
 
-# Stage 2: Runtime stage using OpenJDK 17 (slim variant)
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-
-# Copy the packaged JAR from the build stage; adjust the JAR name as needed
-COPY --from=build /app/target/*.jar app.jar
-
-# Expose the application port (if needed)
+COPY --from=build /app/target/*.jar backend.jar
 EXPOSE 8080
-
-# Start the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "backend.jar"]
