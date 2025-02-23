@@ -27,6 +27,7 @@ FileHub is a full-stack file management system (a mini Dropbox) that allows user
 - **Docker & Docker Compose** (to run all services together)
 - **Node.js & npm** (for running the React frontend locally)
 - **Java 17 & Maven** (for running the Spring Boot backend locally)
+- **Sample file test.txt can be used for testing**
 
 
 ## How to Run (Docker)
