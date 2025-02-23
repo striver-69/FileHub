@@ -35,6 +35,14 @@ services:
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_PROFILES_ACTIVE: docker
-
+    volumes:
+      - ./backend/storage:/app/storage  # Mount local folder to container storage directory
+  frontend:
+    build: ./frontend
+    container_name: frontend-app
+    ports:
+      - "3000:80"  # Maps container port 80 (served by Nginx) to host port 3000
+    depends_on:
+      - backend
 volumes:
   mysql_data:
