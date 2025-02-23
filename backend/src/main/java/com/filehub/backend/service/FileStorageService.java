@@ -3,11 +3,13 @@ package com.filehub.backend.service;
 import com.filehub.backend.model.FileMetadata;
 import com.filehub.backend.repository.FileMetadataRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -110,5 +112,19 @@ public class FileStorageService {
             return fileMetadataRepository.findByFileType(fileType);
         }
         return fileMetadataRepository.findAll();
+    }
+
+    public Resource loadFileAsResource(String fileName) throws FileNotFoundException {
+        Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
+        try {
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new FileNotFoundException("File not found or not readable: " + fileName);
+            }
+        } catch (Exception e) {
+            throw new FileNotFoundException("File not found: " + fileName);
+        }
     }
 }

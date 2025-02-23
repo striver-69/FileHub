@@ -2,11 +2,15 @@ package com.filehub.backend.controller;
 
 import com.filehub.backend.model.FileMetadata;
 import com.filehub.backend.service.FileStorageService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -80,5 +84,18 @@ public class FileController {
             @RequestParam(required = false) String fileType) {
         List<FileMetadata> files = fileStorageService.getAllFiles(uploadedBy, fileType);
         return ResponseEntity.ok(files);
+    }
+
+    @GetMapping("/download/{fileIdentifier}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileIdentifier) {
+        try {
+            Resource resource = fileStorageService.loadFileAsResource(fileIdentifier);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (FileNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
