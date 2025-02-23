@@ -15,4 +15,4 @@ CREATE INDEX idx_uploaded_by ON files_metadata(uploaded_by);
 CREATE INDEX idx_file_type ON files_metadata(file_type);
 
 INSERT INTO files_metadata (file_id, file_name, file_path, file_size, file_type, uploaded_by)
-VALUES ('123e4567-e89b-12d3-a456-426614174000', 'example.txt', '/uploads/example.txt', 1024, 'text/plain', 'user-123');
+VALUES ('123e4567-e89b-12d3-a456-426614174000', 'failure_scenario_file.txt', '/uploads/example.txt', 1024, 'text/plain', 'user-123');
