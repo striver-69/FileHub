@@ -10,18 +10,30 @@ import {
 } from "@mui/material";
 import { uploadFile } from "../api/fileApi";
 
+const allowedFileTypes = ["txt", "jpg", "jpeg", "png", "json"];
+
 const Upload = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadedBy, setUploadedBy] = useState("");
     const [message, setMessage] = useState("");
 
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
+        const file = event.target.files[0];
+        if (file) {
+            const fileExtension = file.name.split(".").pop().toLowerCase();
+            if (!allowedFileTypes.includes(fileExtension)) {
+                setMessage(`Invalid file type! Only ${allowedFileTypes.join(", ")} are allowed.`);
+                setSelectedFile(null);
+            } else {
+                setMessage("");
+                setSelectedFile(file);
+            }
+        }
     };
 
     const handleUpload = async () => {
         if (!selectedFile || !uploadedBy) {
-            setMessage("Please select a file and enter your user ID.");
+            setMessage("Please select a valid file and enter your user ID.");
             return;
         }
         try {
@@ -62,7 +74,12 @@ const Upload = () => {
                             sx={{ height: "56px" }}  // Matches TextField height
                         >
                             Select File
-                            <input type="file" hidden onChange={handleFileChange} />
+                            <input
+                                type="file"
+                                hidden
+                                onChange={handleFileChange}
+                                accept=".txt,.jpg,.jpeg,.png,.json"
+                            />
                         </Button>
                     </Grid>
 
@@ -74,6 +91,7 @@ const Upload = () => {
                             onClick={handleUpload}
                             fullWidth
                             sx={{ height: "56px" }}
+                            disabled={!selectedFile}
                         >
                             Upload
                         </Button>
