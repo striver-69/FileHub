@@ -36,7 +36,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_PROFILES_ACTIVE: docker
     volumes:
-      - ./backend/storage:/app/storage  # Mount local folder to container storage directory
+      - ./storage:/app/storage  # Mount local folder to container storage directory
   frontend:
     build: ./frontend
     container_name: frontend-app

@@ -6,6 +6,7 @@ import {
     Box,
     TextField,
     Alert,
+    Grid
 } from "@mui/material";
 import { uploadFile } from "../api/fileApi";
 
@@ -26,6 +27,8 @@ const Upload = () => {
         try {
             await uploadFile(selectedFile, uploadedBy);
             setMessage("File uploaded successfully!");
+            setSelectedFile(null);
+            setUploadedBy("");
         } catch (error) {
             console.error("Upload error:", error);
             setMessage("File upload failed!");
@@ -38,26 +41,53 @@ const Upload = () => {
                 <Typography variant="h4" gutterBottom>
                     Upload File
                 </Typography>
-                <TextField
-                    label="Uploaded By (User ID)"
-                    variant="outlined"
-                    fullWidth
-                    value={uploadedBy}
-                    onChange={(e) => setUploadedBy(e.target.value)}
-                    sx={{ mb: 2 }}
-                />
-                <Button variant="contained" component="label" sx={{ mb: 2 }}>
-                    Select File
-                    <input type="file" hidden onChange={handleFileChange} />
-                </Button>
+                <Grid container spacing={2}>
+                    {/* User ID Field */}
+                    <Grid item xs={12}>
+                        <TextField
+                            label="Uploaded By (User ID)"
+                            variant="outlined"
+                            fullWidth
+                            value={uploadedBy}
+                            onChange={(e) => setUploadedBy(e.target.value)}
+                        />
+                    </Grid>
+
+                    {/* Select File Button */}
+                    <Grid item xs={12} sm={6}>
+                        <Button
+                            variant="contained"
+                            component="label"
+                            fullWidth
+                            sx={{ height: "56px" }}  // Matches TextField height
+                        >
+                            Select File
+                            <input type="file" hidden onChange={handleFileChange} />
+                        </Button>
+                    </Grid>
+
+                    {/* Upload Button */}
+                    <Grid item xs={12} sm={6}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleUpload}
+                            fullWidth
+                            sx={{ height: "56px" }}
+                        >
+                            Upload
+                        </Button>
+                    </Grid>
+                </Grid>
+
+                {/* Display Selected File */}
                 {selectedFile && (
-                    <Typography variant="body1" gutterBottom>
+                    <Typography variant="body1" gutterBottom sx={{ mt: 2 }}>
                         Selected File: {selectedFile.name}
                     </Typography>
                 )}
-                <Button variant="contained" color="primary" onClick={handleUpload}>
-                    Upload
-                </Button>
+
+                {/* Message Alert */}
                 {message && (
                     <Alert severity="info" sx={{ mt: 2 }}>
                         {message}
